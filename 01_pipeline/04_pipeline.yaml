@@ -43,8 +43,6 @@ spec:
     params:
     - name: IMAGE
       value: $(params.IMAGE)
-    - name: DOCKERFILE  #chatgpt part
-    value: /workspace/shared-workspace/Dockerfile #chatgpt part
     workspaces:
     - name: source
       workspace: shared-workspace
