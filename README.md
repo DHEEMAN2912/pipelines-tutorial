@@ -656,3 +656,5 @@ Watch the OpenShift WebConsole Developer perspective and a PipelineRun will be a
 
 ![pipeline-run-api](docs/images/pipeline-run-api.png
 )
+
+DevOps:)
