@@ -131,7 +131,7 @@ spec:
     - name: scan-image
       taskRef:
         name: trivy-scan
-        kind: ClusterTask
+        kind: Task
       params:
         - name: IMAGE
           value: $(params.IMAGE)
