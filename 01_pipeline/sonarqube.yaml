@@ -1,0 +1,123 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: build-and-deploy-sonar
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: deployment-name
+      type: string
+      description: Name of the deployment to be patched
+    - name: git-url
+      type: string
+      description: URL of the Git repository for the code of deployment
+    - name: git-revision
+      type: string
+      description: Revision to be used from the repo of the code for deployment
+      default: master
+    - name: IMAGE
+      type: string
+      description: Image to be built from the code
+    - name: SONARQUBE_URL
+      type: string
+      description: The URL of the SonarQube server (e.g., http://sonarqube.example.com)
+    - name: SONARQUBE_TOKEN
+      type: string
+      description: The token for authenticating with SonarQube
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: subdirectory
+          value: ""
+        - name: deleteExisting
+          value: "true"
+        - name: revision
+          value: $(params.git-revision)
+    
+    - name: sonar-scanning
+      taskSpec:
+        params:
+          - name: SONARQUBE_URL
+            type: string
+          - name: SONARQUBE_TOKEN
+            type: string
+        steps:
+          - name: sonar-scanner
+            image: sonarsource/sonar-scanner-cli:latest
+            env:
+              - name: SONAR_HOST_URL
+                value: $(params.SONARQUBE_URL)
+              - name: SONAR_TOKEN
+                value: $(params.SONARQUBE_TOKEN)
+            script: |
+              #!/bin/sh
+              sonar-scanner -Dsonar.projectKey=my_project -Dsonar.sources=. -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+      params:
+        - name: SONARQUBE_URL
+          value: $(params.SONARQUBE_URL)
+        - name: SONARQUBE_TOKEN
+          value: $(params.SONARQUBE_TOKEN)
+      runAfter:
+        - fetch-repository
+    
+    - name: build-image
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - sonar-scanning
+    
+    - name: scan-image
+      taskSpec:
+        params:
+          - name: IMAGE
+            type: string
+        steps:
+          - name: trivy
+            image: aquasec/trivy:latest
+            env:
+              - name: TRIVY_INSECURE
+                value: "true"
+            script: |
+              #!/bin/sh
+              trivy image --no-progress $(params.IMAGE)
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+      runAfter:
+        - build-image
+    
+    - name: apply-manifests
+      taskRef:
+        name: apply-manifests
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - scan-image
+    
+    - name: update-deployment
+      taskRef:
+        name: update-deployment
+      params:
+        - name: deployment
+          value: $(params.deployment-name)
+        - name: IMAGE
+          value: $(params.IMAGE)
+      runAfter:
+        - apply-manifests
