@@ -136,6 +136,9 @@ spec:
         steps:
           - name: trivy
             image: aquasec/trivy:latest
+            env:
+              - name: TRIVY_INSECURE
+                value: "true"
             script: |
               #!/bin/sh
               trivy image --no-progress $(params.IMAGE)
@@ -162,4 +165,3 @@ spec:
           value: $(params.IMAGE)
       runAfter:
         - apply-manifests
-
