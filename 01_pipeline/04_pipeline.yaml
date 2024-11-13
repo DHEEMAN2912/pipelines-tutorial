@@ -99,12 +99,6 @@ spec:
     - name: IMAGE
       type: string
       description: Image to be built from the code
-    - name: SONARQUBE_URL
-      type: string
-      description: The URL of the SonarQube server (e.g., http://sonarqube.example.com)
-    - name: SONARQUBE_TOKEN
-      type: string
-      description: The token for authenticating with SonarQube
   tasks:
     - name: fetch-repository
       taskRef:
@@ -135,17 +129,17 @@ spec:
             image: sonarsource/sonar-scanner-cli:latest
             env:
               - name: SONAR_HOST_URL
-                value: http://172.203.224.21:9002/
+                value: "http://172.203.224.21:9002/"
               - name: SONAR_TOKEN
-                value: squ_55c616365af17033f7efec0cd3b314668e62b6e0
+                value: "squ_55c616365af17033f7efec0cd3b314668e62b6e0"
             script: |
               #!/bin/sh
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui -Dsonar.sources=. -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
-      # params:
-      #   - name: SONARQUBE_URL
-      #     value: $(params.SONARQUBE_URL)
-      #   - name: SONARQUBE_TOKEN
-      #     value: $(params.SONARQUBE_TOKEN)
+      params:
+        - name: SONARQUBE_URL
+          value: "http://172.203.224.21:9002/"
+        - name: SONARQUBE_TOKEN
+          value: "squ_55c616365af17033f7efec0cd3b314668e62b6e0"
       runAfter:
         - fetch-repository
     
