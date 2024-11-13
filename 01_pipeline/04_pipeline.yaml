@@ -129,9 +129,16 @@ spec:
       runAfter:
         - fetch-repository
     - name: scan-image
-      taskRef:
-        name: trivy-scan
-        kind: Task
+      taskSpec:
+        params:
+          - name: IMAGE
+            type: string
+        steps:
+          - name: trivy
+            image: aquasec/trivy:latest
+            script: |
+              #!/bin/sh
+              trivy image --no-progress $(params.IMAGE)
       params:
         - name: IMAGE
           value: $(params.IMAGE)
@@ -155,3 +162,4 @@ spec:
           value: $(params.IMAGE)
       runAfter:
         - apply-manifests
+
