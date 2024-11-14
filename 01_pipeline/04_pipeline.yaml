@@ -284,6 +284,8 @@ spec:
               cd /
               cd /workspace/source
               pwd
+              whoami
+              chmod -R 777 /workspace/source
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
