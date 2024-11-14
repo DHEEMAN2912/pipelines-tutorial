@@ -269,6 +269,7 @@ spec:
               cd /workspace/source
               pwd
               ls -la
+              whoami
               git checkout $(params.git-revision)
           - name: sonar-scanner
             image: sonarsource/sonar-scanner-cli:latest
@@ -285,7 +286,6 @@ spec:
               cd /workspace/source
               pwd
               whoami
-              chmod -R 777 /workspace/source
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
