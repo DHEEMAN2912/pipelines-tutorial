@@ -213,7 +213,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: build-and-deploy
+  name: build-and-deploy-test
 spec:
   workspaces:
     - name: shared-workspace
@@ -248,34 +248,52 @@ spec:
           value: "true"
         - name: revision
           value: $(params.git-revision)
-    
+
     - name: sonar-scanning
       taskSpec:
         params:
+          - name: git-url
+            type: string
+          - name: git-revision
+            type: string
           - name: SONARQUBE_URL
             type: string
           - name: SONARQUBE_TOKEN
             type: string
         steps:
+          - name: git-clone
+            image: alpine/git:latest
+            script: |
+              #!/bin/sh
+              git clone $(params.git-url) /workspace/source
+              cd /workspace/source
+              git checkout $(params.git-revision)
           - name: sonar-scanner
             image: sonarsource/sonar-scanner-cli:latest
             env:
               - name: SONAR_HOST_URL
-                value: "http://172.203.224.21:9002/"
+                value: "$(params.SONARQUBE_URL)"
               - name: SONAR_TOKEN
-                value: "sqp_b77a634dd254573b9349c5dd8d4af686c6bfe5a6"
+                value: "$(params.SONARQUBE_TOKEN)"
             script: |
               #!/bin/sh
-              ls -la
-              sonar-scanner -Dsonar.projectKey=pipelines-vote-ui -Dsonar.sources=./ -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+              ls
+              sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
+                             -Dsonar.sources=/workspace/source \
+                             -Dsonar.host.url=$SONAR_HOST_URL \
+                             -Dsonar.login=$SONAR_TOKEN
       params:
+        - name: git-url
+          value: $(params.git-url)
+        - name: git-revision
+          value: $(params.git-revision)
         - name: SONARQUBE_URL
           value: "http://172.203.224.21:9002/"
         - name: SONARQUBE_TOKEN
           value: "sqp_b77a634dd254573b9349c5dd8d4af686c6bfe5a6"
       runAfter:
         - fetch-repository
-    
+
     - name: build-image
       taskRef:
         name: buildah
@@ -288,7 +306,7 @@ spec:
           workspace: shared-workspace
       runAfter:
         - sonar-scanning
-    
+
     - name: scan-image
       taskSpec:
         params:
@@ -308,7 +326,7 @@ spec:
           value: $(params.IMAGE)
       runAfter:
         - build-image
-    
+
     - name: apply-manifests
       taskRef:
         name: apply-manifests
@@ -317,7 +335,7 @@ spec:
           workspace: shared-workspace
       runAfter:
         - scan-image
-    
+
     - name: update-deployment
       taskRef:
         name: update-deployment
@@ -328,13 +346,3 @@ spec:
           value: $(params.IMAGE)
       runAfter:
         - apply-manifests
-
-
-
-
-
-
-
-
-
-
