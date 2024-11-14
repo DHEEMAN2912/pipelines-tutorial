@@ -213,7 +213,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: build-and-deploy-test
+  name: build-and-deploy
 spec:
   workspaces:
     - name: shared-workspace
