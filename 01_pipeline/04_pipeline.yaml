@@ -267,6 +267,8 @@ spec:
               #!/bin/sh
               git clone $(params.git-url) /workspace/source
               cd /workspace/source
+              pwd
+              ls -la
               git checkout $(params.git-revision)
           - name: sonar-scanner
             image: sonarsource/sonar-scanner-cli:latest
@@ -278,6 +280,7 @@ spec:
             script: |
               #!/bin/sh
               ls
+              pwd
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
