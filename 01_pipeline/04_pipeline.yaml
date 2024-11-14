@@ -280,18 +280,17 @@ spec:
                 value: "$(params.SONARQUBE_TOKEN)"
             script: |
               #!/bin/sh
-              ls
-              pwd
-              cd /
-              cd /workspace/source
               pwd
               whoami
+              ls -la
+              mkdir test
+              cd test
+              cp /workspace/source .
+              ls -la
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
                              -Dsonar.login=$SONAR_TOKEN
-            securityContext:
-             runAsUser: 0
       params:
         - name: git-url
           value: $(params.git-url)
