@@ -286,7 +286,9 @@ spec:
               mkdir test
               ls -la
               cd test
+              pwd
               cp -r /workspace/source .
+              cd source
               ls -la
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
