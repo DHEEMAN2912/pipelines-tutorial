@@ -268,9 +268,6 @@ spec:
               #!/bin/sh
               ls -la
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui -Dsonar.sources=./ -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
-        workspaces:
-           - name: output
-             workspace: shared-workspace
       params:
         - name: SONARQUBE_URL
           value: "http://172.203.224.21:9002/"
