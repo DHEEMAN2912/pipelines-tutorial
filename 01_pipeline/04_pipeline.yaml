@@ -95,7 +95,7 @@ spec:
     - name: git-revision
       type: string
       description: Revision to be used from the repo of the code for deployment
-      default: master
+      default: main
     - name: IMAGE
       type: string
       description: Image to be built from the code
