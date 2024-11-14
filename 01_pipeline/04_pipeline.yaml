@@ -284,8 +284,9 @@ spec:
               whoami
               ls -la
               mkdir test
+              ls -la
               cd test
-              cp /workspace/source .
+              cp -r /workspace/source .
               ls -la
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
