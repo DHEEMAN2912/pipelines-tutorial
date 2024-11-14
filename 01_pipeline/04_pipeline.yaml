@@ -279,7 +279,7 @@ spec:
               #!/bin/sh
               ls
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
-                             -Dsonar.sources=/workspace/source \
+                             -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
                              -Dsonar.login=$SONAR_TOKEN
       params:
