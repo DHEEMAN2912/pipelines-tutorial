@@ -134,6 +134,7 @@ spec:
                 value: "sqp_b77a634dd254573b9349c5dd8d4af686c6bfe5a6"
             script: |
               #!/bin/sh
+              ls
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui -Dsonar.sources=/workspace/shared-workspace -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
       params:
         - name: SONARQUBE_URL
