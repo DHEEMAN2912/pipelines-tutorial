@@ -281,6 +281,9 @@ spec:
               #!/bin/sh
               ls
               pwd
+              cd /
+              cd /workspace/source
+              pwd
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
