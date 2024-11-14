@@ -265,8 +265,8 @@ spec:
             image: alpine/git:latest
             script: |
               #!/bin/sh
-              git clone $(params.git-url) /workspace/source
-              cd /workspace/source
+              git clone $(params.git-url) /usr/src
+              cd /usr/src
               git checkout $(params.git-revision)
           - name: sonar-scanner
             image: sonarsource/sonar-scanner-cli:latest
@@ -279,7 +279,7 @@ spec:
               #!/bin/sh
               ls
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
-                             -Dsonar.sources=/workspace/source \
+                             -Dsonar.sources=/usr/src \
                              -Dsonar.host.url=$SONAR_HOST_URL \
                              -Dsonar.login=$SONAR_TOKEN
       params:
