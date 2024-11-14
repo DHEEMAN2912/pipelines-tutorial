@@ -267,9 +267,6 @@ spec:
               #!/bin/sh
               git clone $(params.git-url) /workspace/source
               cd /workspace/source
-              pwd
-              ls -la
-              whoami
               git checkout $(params.git-revision)
           - name: sonar-scanner
             image: sonarsource/sonar-scanner-cli:latest
@@ -280,16 +277,10 @@ spec:
                 value: "$(params.SONARQUBE_TOKEN)"
             script: |
               #!/bin/sh
-              pwd
-              whoami
-              ls -la
               mkdir test
-              ls -la
               cd test
-              pwd
               cp -r /workspace/source .
               cd source
-              ls -la
               sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
