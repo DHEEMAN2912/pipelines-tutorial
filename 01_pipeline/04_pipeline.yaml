@@ -208,7 +208,7 @@
 
 
 
-# New Pipeline
+# New Pipeline Parametarized
 
 apiVersion: tekton.dev/v1
 kind: Pipeline
@@ -231,6 +231,16 @@ spec:
     - name: IMAGE
       type: string
       description: Image to be built from the code
+    - name: SONARQUBE_URL
+      type: string
+      description: SonarQube server URL
+    - name: SONARQUBE_TOKEN
+      type: string
+      description: SonarQube authentication token
+    - name: projectKey
+      type: string
+      description: SonarQube project key
+
   tasks:
     - name: fetch-repository
       taskRef:
@@ -260,6 +270,8 @@ spec:
             type: string
           - name: SONARQUBE_TOKEN
             type: string
+          - name: projectKey
+            type: string
         steps:
           - name: git-clone
             image: alpine/git:latest
@@ -275,13 +287,15 @@ spec:
                 value: "$(params.SONARQUBE_URL)"
               - name: SONAR_TOKEN
                 value: "$(params.SONARQUBE_TOKEN)"
+              - name: SONAR_PROJECT_KEY
+                value: "$(params.projectKey)"
             script: |
               #!/bin/sh
               mkdir test
               cd test
               cp -r /workspace/source .
               cd source
-              sonar-scanner -Dsonar.projectKey=pipelines-vote-ui \
+              sonar-scanner -Dsonar.projectKey=$(params.projectKey) \
                              -Dsonar.sources=. \
                              -Dsonar.host.url=$SONAR_HOST_URL \
                              -Dsonar.login=$SONAR_TOKEN
@@ -291,9 +305,11 @@ spec:
         - name: git-revision
           value: $(params.git-revision)
         - name: SONARQUBE_URL
-          value: "http://172.203.224.21:9002/"
+          value: $(params.SONARQUBE_URL)
         - name: SONARQUBE_TOKEN
-          value: "sqp_b77a634dd254573b9349c5dd8d4af686c6bfe5a6"
+          value: $(params.SONARQUBE_TOKEN)
+        - name: projectKey
+          value: $(params.projectKey)
       runAfter:
         - fetch-repository
 
