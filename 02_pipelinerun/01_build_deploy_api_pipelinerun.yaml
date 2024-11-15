@@ -12,6 +12,12 @@ spec:
     value: https://github.com/openshift/pipelines-vote-api.git
   - name: IMAGE
     value: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/pipelines-vote-api
+  - name: SONARQUBE_URL
+    value: http://172.203.224.21:9002/
+  - name: SONARQUBE_TOKEN
+    value: sqp_f21c781f847b605718f8f23e5d86765c54f9d805
+  - name: projectKey
+    value: pipelines-vote-api
   workspaces:
   - name: shared-workspace
     volumeClaimTemplate:
