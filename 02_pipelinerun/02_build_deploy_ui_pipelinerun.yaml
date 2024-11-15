@@ -15,7 +15,9 @@ spec:
   - name: SONARQUBE_URL
     value: http://172.203.224.21:9002/
   - name: SONARQUBE_TOKEN
-    value: squ_55c616365af17033f7efec0cd3b314668e62b6e0
+    value: sqp_b77a634dd254573b9349c5dd8d4af686c6bfe5a6
+  - name: projectKey
+    value: pipelines-vote-ui
   workspaces:
   - name: shared-workspace
     volumeClaimTemplate:
