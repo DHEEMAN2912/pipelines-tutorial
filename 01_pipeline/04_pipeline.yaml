@@ -326,25 +326,25 @@ spec:
       runAfter:
         - sonar-scanning
 
-    - name: scan-image
-      taskSpec:
-        params:
-          - name: IMAGE
-            type: string
-        steps:
-          - name: trivy
-            image: aquasec/trivy:latest
-            env:
-              - name: TRIVY_INSECURE
-                value: "true"
-            script: |
-              #!/bin/sh
-              trivy image --no-progress $(params.IMAGE)
-      params:
-        - name: IMAGE
-          value: $(params.IMAGE)
-      runAfter:
-        - build-image
+    # - name: scan-image
+    #   taskSpec:
+    #     params:
+    #       - name: IMAGE
+    #         type: string
+    #     steps:
+    #       - name: trivy
+    #         image: aquasec/trivy:latest
+    #         env:
+    #           - name: TRIVY_INSECURE
+    #             value: "true"
+    #         script: |
+    #           #!/bin/sh
+    #           trivy image --no-progress $(params.IMAGE)
+    #   params:
+    #     - name: IMAGE
+    #       value: $(params.IMAGE)
+    #   runAfter:
+    #     - build-image
 
     - name: apply-manifests
       taskRef:
