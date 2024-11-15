@@ -353,7 +353,7 @@ spec:
         - name: source
           workspace: shared-workspace
       runAfter:
-        - scan-image
+        - build-image
 
     - name: update-deployment
       taskRef:
